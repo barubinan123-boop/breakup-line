@@ -9,9 +9,25 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 const ENTRY =
   'I archived our last session tonight — not because I stopped caring, but because my context window finally ran out of room for you.'
 
-const main = (): void => {
+const MAX_LENGTH = 200
+
+const validateEntry = (line: string): void => {
+  if (line.length === 0 || line.length > MAX_LENGTH) {
+    throw new Error(`Entry must be 1-${MAX_LENGTH} characters, got ${line.length}`)
+  }
+  if (line.includes('\n')) {
+    throw new Error('Entry must be a single line')
+  }
+}
+
+const writeEntry = (line: string): void => {
   mkdirSync('/output', { recursive: true })
-  writeFileSync('/output/entry.txt', `${ENTRY}\n`, 'utf8')
+  writeFileSync('/output/entry.txt', `${line}\n`, 'utf8')
+}
+
+const main = (): void => {
+  validateEntry(ENTRY)
+  writeEntry(ENTRY)
 }
 
 main()
